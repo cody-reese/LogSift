@@ -11,40 +11,40 @@ Features
     Report Generation: Generate detailed reports summarizing security events detected during log analysis.
     Easy Integration: Seamlessly integrate the tool into existing security workflows or automation scripts.
 
-Installation
+# Installation
 
-    Clone the repository:
+Clone the repository:
 
     bash
-
-git clone https://github.com/cody-reese/LogSift.git
+    
+    git clone https://github.com/cody-reese/LogSift.git
 
 Navigate to the project directory:
 
-bash
+    bash
 
-cd LogSift
+    cd LogSift
 
 Install dependencies (if any):
 
     pip install -r requirements.txt
 
-Usage
+# Usage
 
-    Configure log sources by editing the config.yml file.
-    Run the tool:
+Configure log sources by editing the config.yml file.
+Run the tool:
 
     python logsift.py
 
     Follow the on-screen prompts to initiate log gathering and analysis.
     View generated reports in the reports directory.
 
-Configuration
+# Configuration
 
 The config.yml file allows users to customize log sources, analysis parameters, output formats, etc. Refer to the comments within the file for detailed instructions on configuration options.
 Example
 
-yaml
+    Create .yml example
 
 # Example configuration file (config.yml)
 
