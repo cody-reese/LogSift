@@ -1,71 +1,30 @@
 import os, platform
-from datetime import datetime, timezone
-# from logsift import collector, parser, analyzer, reporter
-
-def get_log_sources():
-    # Determine the operating system
-    system = platform.system()
-    log_sources = {}
-
-    # Define the system default log file paths
-    if system == 'Linux':
-        log_sources['System'] = '/var/log/syslog'
-        log_sources['Application'] = '/var/log/application.log'
-        log_sources['Security'] = '/var/log/auth.log'
-        log_sources['Network'] = '/var/log/iptables.log'
-    elif system == 'Windows':
-        log_sources['System'] = 'System'
-        log_sources['Application'] = 'Application'
-        log_sources['Security'] = 'Security'
-        log_sources['Network'] = 'Microsoft-Windows-TCPIP/Operational'
-    else:
-        # Unsupported platform
-        raise NotImplementedError(f"Unsupported platform: {system}")
-    return log_sources
-
-def create_report_files(log_sources, report_directory):
-    # Ensure report directory exists
-    if not os.path.exists(report_directory):
-        os.makedirs(report_directory)
-
-    # Get current UTC date and time
-    current_utc_time = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
-
-    # Iterate through log sources
-    for log_type, log_source in log_sources.items():
-        # Construct report file path with UTC date time included
-        report_file_name = f"{log_type}_report_{current_utc_time}.txt"
-        report_file_path = os.path.join(report_directory, report_file_name)
-
-        # Create report file
-        with open(report_file_path, 'w') as report_file:
-            report_file.write(f"Report for {log_type}:\n")
-            report_file.write(f"Log Source: {log_source}\n")
-            report_file.write("\n")
-            report_file.write("Add your analysis here...\n")
+from logsift import collector, parser, analyzer, reporter
 
 def main():
-    # Define file paths for reports being generated
-    logSources = get_log_sources()
+    log_directory = "/var/log/"
+    all_events = []
 
-    # Create log analysis report files
-    # Modify this to create a Reports directory if one doesn't already exist
-    create_report_files(logSources, "Reports")
+    # Walk through the directory tree
+    for root, dirs, files in os.walk(log_directory):
+        for file in files:
+            events = []
+            file_path = os.path.join(root, file)
 
-    # # Step 1: Collect logs
-    # What is the date range we want to collect?
-    # raw_logs = collector.collect_logs(log_directory)
+            # Collect the contents of the log file
+            log = collector.collect_log(file_path)
 
-    # # Step 2: Parse logs
-    # parsed_logs = parser.parse_logs(raw_logs)
+            # Parse the log into a more readable format
+            parsed_log = parser.parse_logs(log)
 
-    # # Step 3: Analyze logs
-    # security_events = analyzer.analyze_logs(parsed_logs)
+            # Analyze the parsed log for security events
+            events = analyzer.analyze_logs(parsed_log)
+            all_events.append(events)
+    
+    # Generate the security event report
+    reporter.create_report(events)        
 
-    # # Step 4: Generate report
-    # reporter.generate_report(security_events, report_file)
-
-    # print(f"Security report generated at {report_file}")
+    print("Security report finished.")
 
 if __name__ == "__main__":
     main()
